@@ -1,0 +1,33 @@
+// Display total sold count and views count on shop loop
+add_action( 'woocommerce_after_shop_loop_item', 'shop_product_sold_count_and_views', 12 );
+function shop_product_sold_count_and_views() {
+    global $product;
+    $total_sold = $product->get_total_sales();
+    $product_id = $product->get_id();
+    $views_key = 'product_views_count';
+    $views = get_post_meta($product_id, $views_key, true);
+    if ( $total_sold || $views ) {
+        echo '<span style="display: inline-block; margin-right: 10px;">' . sprintf(__('Sold: %s', 'woocommerce'), $total_sold) . '</span>';
+
+    }
+}
+
+/// Display total sold count and views count on single product page
+add_action( 'woocommerce_single_product_summary', 'wp_product_sold_count_and_views', 35 );
+function wp_product_sold_count_and_views() {
+    global $product;
+    $total_sold = $product->get_total_sales();
+    $product_id = $product->get_id();
+    $views_key = 'product_views_count';
+    $views = get_post_meta($product_id, $views_key, true);
+    if ( $total_sold || $views ) {
+        echo '<span class="custom-sold" style="display: inline-block; margin-right: 10px;">' . sprintf(__('Sold: %s', 'woocommerce'), $total_sold) . ' | ';
+        
+        // Check if the WP-Views plugin function exists before calling it
+        if (function_exists('the_views')) {
+            echo sprintf(__('%s', 'woocommerce'), the_views(false));
+        }
+		
+        echo '</span>';
+    }
+}
